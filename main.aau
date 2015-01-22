@@ -1,0 +1,161 @@
+import win.ui;
+/*DSG{{*/
+var mainForm = ..win.form(text="歌词下载器";right=640;bottom=480;border="none")
+mainForm.add()
+/*}}*/
+
+import web.layout; 
+import web.layout.behavior.windowCommand;
+import web.layout.behavior.tabs;
+
+
+var wbLayout = web.layout( mainForm )
+
+if( _STUDIO_INVOKED ){
+	import web.layout.debug;
+	wbLayout.attachEventHandler( web.layout.debug );
+}
+var i = 0;
+namespace web.layout.behavior.command{
+	onMouseClick = function( ltTarget,ltOwner,x,y,ltMouseParams ) {
+		var id = ltOwner.getAttribute("id");
+		
+		import fsys.dlg;
+		import thread;
+		
+		if("openDir" == id){
+			var dir = fsys.dlg.opendir("/");
+			if(!dir) return;
+			//设置按钮的位置
+			var btn = wbLayout.querySelector(".empty-div");
+			btn.setAttribute("style","margin-top:15px;");
+			btn.querySelector("#openDir").innerHTML = "切换歌曲目录";
+			var listtable = wbLayout.querySelector("#list-table");
+			listtable.setAttribute("style","display:block");
+			btn.querySelector("#startDl").setAttribute("style","display:inline");
+			var th = /*
+				<tr>
+	    			<th style="border-left:1px solid #BFBFBF;" width="10%">序号</th>
+	    			<th width="80%">歌曲名</th>
+	    			<th width="10%">状态</th>
+	    		</tr>
+			*/
+			listtable.innerHTML = th;
+			i = 0;
+			listFile(listtable,dir);	
+		}
+		else if("startDl" == id){
+			var listtable = wbLayout.querySelector("#list-table");
+			var undownloadtr = listtable.querySelectorAll("tr[status='0']");
+			if(#undownloadtr == 0) return;
+			
+			var data = {};
+			for(k,v in undownloadtr){
+				data[k] = {
+					status = v.getAttribute("status");
+					fn = v.getAttribute("fn");
+					fullpath = v.getAttribute("fullpath");
+					dir = v.getAttribute("dir");
+					lrcpath = v.getAttribute("lrcpath");
+				};
+			}
+			
+			
+			import thread.command;
+			var listener = thread.command();
+			
+			listener.download = function(){
+        		import string;
+				import inet.whttp;
+				import inet.httpFile;
+				for(k,v in undownloadtr){
+					var trele = v;
+					whttp=inet.whttp();	
+					var source = whttp.get("http://music.baidu.com/search/lrc?key=" + v.getAttribute("fn"));
+					whttp.close();
+					source = string.fromto(source);
+					var preffix = 'title="'+ trele.getAttribute("fn") +'"';
+					if(string.indexOf(source, preffix) == null){
+						trele.querySelectorAll("td")[3].innerHTML = "没有找到";
+						continue;
+					}
+					source = string.sub(source,string.indexOf(source, preffix),string.len(source));
+					//下载地址
+					var url = "http://music.baidu.com" + intercept(source, "down-lrc-btn { 'href':'", "' }");
+					
+					var remoteFile = inet.httpFile(url ,trele.getAttribute("lrcpath"));
+					
+					//下载文件
+					var ok,err,fileSize = remoteFile.download();
+					if(ok){
+						trele.querySelectorAll("td")[3].innerHTML = "<font color='green'>已下载</font>";
+						trele.setAttribute("status", "1");
+					}else{
+						trele.querySelectorAll("td")[3].innerHTML = "<font color='red'>下载错误</font>";
+					}
+					remoteFile.close();
+					wbLayout.updateWindow();
+					fsys.delete(trele.getAttribute("lrcpath") + ".dow!oad");
+				}
+			}
+			import.win;
+			win.invoke(
+    			function(){ 
+        			//必须在线程函数内部导入需要的库
+        			import thread.command;
+        			//调用界面线程的命令
+        			thread.command.download();
+    			}
+			);
+		}
+					
+	}
+	
+	/*字符串截取*/
+	function intercept(source, preffix, suffix){
+		var s = string.sub(source, string.indexOf(source, preffix) + string.len(preffix), string.len(source));
+		s = string.sub(s, 0, string.indexOf(s, suffix) - 1);
+		return s;
+	}
+	
+	/*加载目录下的音频文件*/
+	function listFile(listtable,dir){
+		import string;
+		import io;
+		fsys.enum( dir, "*.*",
+			function(dir,filename,fullpath,findData){ 
+				if(filename){
+					if(string.endWith(filename,".mp3") || string.endWith(filename,".wma")){
+						var fullfn = string.sub(fullpath,0,string.lastIndexAny(fullpath,".") - 1);
+						var fn = string.sub(filename,0,string.lastIndexAny(filename,".") - 1);
+						i++;
+						var statusName = "未下载";
+						var status = 0;
+						if(io.exist(fullfn + ".lrc")){
+							statusName = "<font color='green'>已下载</font>";
+							status = 1;
+						}
+						html = "<tr status='"+status+"' fn='"+fn+"' fullpath='"+fullpath+"' dir='"+dir+"' lrcpath='"+(fullfn + ".lrc")+"'>"+
+	    							"<td class='ft'>"+i+"</td>"+
+	    							"<td>"+filename+"</td>"+
+	    							"<td>"+statusName+"</td>"+
+	    						"</tr>";
+	    				listtable.insertAdjacentHTML("beforeEnd", html);
+					}					
+				}
+				else{
+					listFile(listtable,fullpath);
+				}
+			} 
+			,false
+		);
+	}
+}
+
+wbLayout.go("/layout/main.html");
+ 
+import win.ui.shadow;
+win.ui.shadow(mainForm); //添加阴影边框
+
+mainForm.show() 
+return win.loopMessage(); 

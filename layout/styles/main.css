@@ -1,0 +1,100 @@
+﻿body{
+	padding:0;
+	margin:0;
+	overflow:hidden;
+	background:#F0F7FE;
+}
+
+#title-bar{ 
+    behavior:windowCommand;  
+    width:100%; /*宽度撑满窗口*/
+    height:30px; /*指定高度*/
+    padding:0;
+    background:rgb(33,127,188) url(images/皮肤1.png);
+    line-height:30px;
+    color:#fff;
+    font-family:"微软雅黑";
+} 
+
+/*CSS选择器中,空格表示节点间的父子包含关系*/
+#title-bar .ctrl-bar{  
+    position:absolute;//标题栏按钮容器绝对定位到窗口右上角
+    top:0;//顶坐标1像素
+    right:0;//右坐标5像素
+}
+
+#title-bar a[command]{ 
+    display:block; //显示为块节点
+    float:left;//块节点左浮动,如果有多个按钮可以从左向右排
+    height:12px;
+    font-family:"Marlett";/*这个字体把小写r显示为关闭符号*/  
+    padding:0 8px;
+}
+
+#title-bar a[command]:hover{ 
+    background:#2D5D91;
+}
+
+#main-body{
+	width:100%; /*宽度撑满窗口*/
+	position:absolute;
+	top:30px;
+	left:0;
+}
+
+.empty-div{
+	margin-top:180px;
+	width:100%;
+	text-align:center;
+}
+
+.btn {
+	padding:2px 13px;
+	font-size:12px; 
+	background:rgb(27,174,93);
+	color:white; 
+	behavior:~command;
+}
+
+.btn:hover{
+	background:rgb(33,127,188);
+	cursor:pointer;
+}
+
+table{
+	width:100%;
+	padding:10px;
+	border-collapse:collapse;
+	height:360px;
+	overflow:auto;
+	vertical-scrollbar: mini_scrollbar;
+}
+table th{
+	font-size:12px;
+	color:#fff;
+	text-align:left;
+	padding:1px 5px;
+	border:0px solid #BFBFBF;
+	background:rgb(27,174,93);
+	border-left:0;
+}
+table td{
+	font-size:12px;
+	border:1px solid #BFBFBF;
+	text-align:left;
+	padding:1px 5px;
+	border-left:0;
+	border-top:0;
+	color:#666;
+}
+table .ft{
+	border-left:1px solid #BFBFBF;
+}
+/* 自定义垂直滚动条 */
+@set mini_scrollbar {
+	.base { width: 8px; }
+	:root { background:url(images/slider_root.png)}
+	.base, .prev, .next, .next-page, .prev-page { background:none; border: none; }
+	.slider { background:rgb(27,174,93);}
+	.slider:hover { background:#2D5D91;	}	
+}

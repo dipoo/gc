@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="gb2312"?>
+<project ver="6" name="歌词下载器" libEmbed="true" icon="music.ico" CompanyName="0" FileDescription="歌词下载器" LegalCopyright="Copyright (C) dipoo" ProductName="歌词下载器" InternalName="歌词下载器" FileVersion="1.0" ProductVersion="1.0" publishDir="/Publish/" ui="win" output="歌词下载器.exe">
+	<file name="main.aau" path="main.aau"/>
+	<folder name="资源文件(web.layout)" path="layout" comment="" embed="true">
+		<file name="main.html" path="layout\main.html" comment="layout\main.html"/>
+		<folder name="styles" path="layout\styles" comment="layout\styles">
+			<file name="main.css" path="layout\styles\main.css" comment="layout\styles\main.css"/>
+			<folder name="images" path="layout\styles\images" comment="layout\styles\images">
+				<file name="皮肤1.png" path="layout\styles\images\皮肤1.png" comment="layout\styles\images\皮肤1.png"/>
+				<file name="slider_root.png" path="layout\styles\images\slider_root.png" comment="layout\styles\images\slider_root.png"/>
+				<file name="folder_green_music.png" path="layout\styles\images\folder_green_music.png" comment="layout\styles\images\folder_green_music.png"/>
+				<file name="bg.png" path="layout\styles\images\bg.png" comment="layout\styles\images\bg.png"/>
+			</folder>
+		</folder>
+	</folder>
+</project>
