@@ -49,18 +49,6 @@ namespace web.layout.behavior.command{
 			var undownloadtr = listtable.querySelectorAll("tr[status='0']");
 			if(#undownloadtr == 0) return;
 			
-			var data = {};
-			for(k,v in undownloadtr){
-				data[k] = {
-					status = v.getAttribute("status");
-					fn = v.getAttribute("fn");
-					fullpath = v.getAttribute("fullpath");
-					dir = v.getAttribute("dir");
-					lrcpath = v.getAttribute("lrcpath");
-				};
-			}
-			
-			
 			import thread.command;
 			var listener = thread.command();
 			
